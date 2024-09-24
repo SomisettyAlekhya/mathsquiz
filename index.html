@@ -1,0 +1,283 @@
+<html>
+    <head>
+        <title>Maths Game</title>
+        <meta charset="utf-8">
+        <meta name="viewport" 
+        content="width=device-width, 
+        initial-scale=1">
+        <style>
+            html{
+    height:100%;
+    background: radial-gradient(circle,#fff,grey);
+}
+#container{
+    height:500px;
+    width:800px;
+    background-color: skyblue;
+    margin:100px auto ;
+    padding:20px;
+    border-radius:20px;
+    box-shadow: 4px 4px 10px 20px pink;
+    /* horizontal,vertical,blur radius,optional speed
+    radius,color*/ 
+    position:relative;
+}
+#score{
+    background-color:royalblue;
+    color:peachpuff;
+    padding:10px;
+     position:absolute;
+     left: 700px;
+    box-shadow:4px 4px 4px  silver;
+}
+#correct{
+    position:absolute;
+    left: 300px;
+    background-color: greenyellow;
+    color:white;
+    padding: 11px;
+    display: none;
+
+}
+#wrong{
+    position:absolute;
+    left: 300px;
+    background-color: red;
+    color:white;
+    padding: 11px;
+    display:none;
+}
+#question{
+    width:500px;
+    height:150px; 
+    margin:50px auto 10px auto;
+    background-color: violet; 
+    box-shadow: 4px 4px 4px blue;
+    font-size:100px;
+    text-align:center;
+    font-family: "Gill Sans", sans-serif;
+    color:black;
+}
+#instruction{
+    width:500px;
+    height:50px;
+    background-color: purple;
+    margin:10px auto;
+    text-align:center;
+    line-height:50px;
+    box-shadow:4px 4px 4px royalblue;
+}
+#choices{
+    height:100px;
+    width:500px;
+    margin:10px auto;
+}
+.box{
+    width:108px;
+    height:100px;
+    background-color: white;
+    float:left;
+    margin-right:20px;
+    cursor: pointer;
+    box-shadow:4px 4px 4px rosybrown;
+    text-align: center;
+    line-height:90px;
+    position:relative;
+    transition: all 0.4s;
+}
+.box:hover, #startreset:hover{
+    background-color: #9c89f6;
+    color:white;
+    box-shadow: 0px 4px darkcyan;
+}
+.box:active,#startreset:active{
+    box-shadow: 0px 0px green;
+    top:7px;
+}
+#box4{
+    margin-right:0;
+}
+#startreset{
+    width: 78px;
+    padding: 10px;
+    top: 8px;
+    background-color: rgba(255,255,255,0.5);
+    margin: 10 auto;
+    border-radius: 3px;
+    cursor: pointer;
+    box-shadow: 0px 4px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    position: relative;
+    transition: all 0.4s;
+}
+#timeremaining{
+    width:130px;
+    padding:10px;
+    position:absolute;
+    top:450px;
+    left:650px;
+    background-color:goldenrod;
+    border-radius: 3px;
+    box-shadow:0px 4px grey;
+   /* visibility: hidden; */
+    display:none;
+}
+#gameover{
+    height:200px;
+    width:500px;
+    background:linear-gradient(orange,yellow);
+    color: white;
+    font-size: 2.5em;
+    text-align: center;
+    text-transform: uppercase;
+    position: absolute;
+    top: 130px;
+    left: 160px;
+    z-index: 2;
+    display:none;
+
+}
+        </style>
+
+    </head>
+    <body>
+        <div id="container">
+            <div id="score">
+                Score: <span id="scorevalue">0</span>
+            </div>
+            <div id="correct">
+                Correct
+            </div>
+            <div id="wrong">
+                Try again
+            </div>
+            <div id="question">
+                
+            </div>
+            <div id="instruction">
+                Click on the Correct answer
+            </div>
+            <div id="choices">
+                <div id="box1" class="box"></div>
+                <div id="box2" class="box"></div>
+                <div id="box3" class="box"></div>
+                <div id="box4" class="box"></div>
+            </div>
+            <div id="startreset">
+                Start Game
+            </div>
+            <div id="timeremaining">
+                Time remaining:<span id="timeremainingvalue">60</span>
+            </div>
+            <div id="gameover">
+               
+            </div>
+        </div>
+        <script>
+            //javascript.js
+var playing = false;
+var score;
+var action;
+var timeremaining;
+var correctAnswer;
+document.getElementById("startreset").onclick = function(){
+    
+    if(playing == true){
+        
+        location.reload(); //reload page
+        
+    }else{
+        
+        playing = true;    
+        score = 0;
+        document.getElementById("scorevalue").innerHTML = score;
+        
+        show("timeremaining");
+        timeremaining = 60;
+        document.getElementById("timeremainingvalue").innerHTML = timeremaining;
+        hide("gameover");
+        document.getElementById("startreset").innerHTML = "Reset Game";
+        startCountdown();
+        generateQA();
+    }
+    
+}
+for(i=1; i<5; i++){
+    document.getElementById("box"+i).onclick = function(){
+    //check if we are playing     
+    if(playing == true){
+        if(this.innerHTML == correctAnswer){
+            score++;
+            document.getElementById("scorevalue").innerHTML = score;
+            hide("wrong");
+            show("correct");
+            setTimeout(function(){
+                hide("correct");   
+            }, 1000);
+            generateQA();
+        }else{
+            hide("correct");
+            show("wrong");
+            setTimeout(function(){
+                hide("wrong");   
+            }, 1000);
+        }
+    }
+}   
+}
+
+function startCountdown(){
+    action = setInterval(function(){
+        timeremaining -= 1;
+        document.getElementById("timeremainingvalue").innerHTML = timeremaining;
+        if(timeremaining == 0){// game over
+            stopCountdown();
+            show("gameover");
+         document.getElementById("gameover").innerHTML = "<p>Game over!</p><p>Your score is " + score + ".</p>";   
+            hide("timeremaining");
+            hide("correct");
+            hide("wrong");
+            playing = false;
+            document.getElementById("startreset").innerHTML = "Start Game";
+        }
+    }, 1000);    
+}
+
+
+function stopCountdown(){
+    clearInterval(action);   
+}
+function hide(Id){
+    document.getElementById(Id).style.display = "none";   
+}
+
+function show(Id){
+    document.getElementById(Id).style.display = "block";   
+}
+
+function generateQA(){
+    var x = 1+ Math.round(9*Math.random());
+    var y = 1+ Math.round(9*Math.random());
+    correctAnswer = x*y;
+    document.getElementById("question").innerHTML = x + "x" + y;
+    var correctPosition = 1+ Math.round(3*Math.random());
+    document.getElementById("box"+correctPosition).innerHTML = correctAnswer; //fill one box with the correct answer
+    
+    //fill other boxes with wrong answers
+    
+    var answers = [correctAnswer];
+    
+    for(i=1; i<5; i++){
+        if(i != correctPosition) {
+            var wrongAnswer;
+            do{
+                wrongAnswer = (1+ Math.round(9*Math.random()))*(1+ Math.round(9*Math.random())); //a wrong answer
+            }while(answers.indexOf(wrongAnswer)>-1)
+            document.getElementById("box"+i).innerHTML = wrongAnswer;
+            answers.push(wrongAnswer);
+        }
+    }
+}
+        </script>
+    </body>
+    </html>
